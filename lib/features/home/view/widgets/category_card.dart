@@ -1,5 +1,3 @@
-
-// lib/features/home/widgets/category_card.dart
 import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -30,7 +28,15 @@ class CategoryCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(icon),
+            Image.network(
+              icon,
+              height: screenHeight * 0.05, // optional size control
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.image_not_supported,
+                color: Colors.grey,
+              ),
+            ),
             SizedBox(height: screenHeight * (4 / 786.7)),
             Text(
               title,
@@ -49,4 +55,3 @@ class CategoryCard extends StatelessWidget {
     );
   }
 }
-

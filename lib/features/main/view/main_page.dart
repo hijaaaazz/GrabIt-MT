@@ -21,39 +21,44 @@ class MainPage extends StatelessWidget {
         
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: IndexedStack(
-                  index: viewModel.currentIndex,
-                  children: const [
-                    HomePage(),
-                    CategoryPage(), // Changed from CartPage to match nav
-                    CartPage(),
-                    OffersPage(), // Changed from ExplorePage to match nav
-                    ProfilePage(), // This matches the Account nav item
-                  ],
+          body: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: IndexedStack(
+                    index: viewModel.currentIndex,
+                    children: const [
+                      HomePage(),
+                      CategoryPage(), // Changed from CartPage to match nav
+                      CartPage(),
+                      OffersPage(), // Changed from ExplorePage to match nav
+                      ProfilePage(), // This matches the Account nav item
+                    ],
+                  ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ImprovedBottomNavBar(
-                  items: [
-                     NavItem(icon: Icons.home, label: 'Home'),
-                    NavItem(icon: Icons.grid_view, label: 'Category'),
-                    NavItem(icon: Icons.shopping_cart, label: 'Cart'),
-                    NavItem(icon: Icons.local_offer, label: 'Offers'),
-                    NavItem(icon: Icons.person, label: 'Account'),
-                  ],
-                  currentIndex: viewModel.currentIndex,
-                  onTap: (index) {
-                    log('onTap called with index: $index');
-                    viewModel.setTab(index);
-                  },
-                ),
-              )
-            ],
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ImprovedBottomNavBar(
+                    items: [
+                       NavItem(icon: Icons.home, label: 'Home'),
+                      NavItem(icon: Icons.grid_view, label: 'Category'),
+                      NavItem(icon: Icons.shopping_cart, label: 'Cart'),
+                      NavItem(icon: Icons.local_offer, label: 'Offers'),
+                      NavItem(icon: Icons.person, label: 'Account'),
+                    ],
+                    currentIndex: viewModel.currentIndex,
+                    onTap: (index) {
+                      log('onTap called with index: $index');
+                      viewModel.setTab(index);
+                    },
+                  ),
+                )
+              ],
+              
+            ),
           ),
+          
         );
       },
     );

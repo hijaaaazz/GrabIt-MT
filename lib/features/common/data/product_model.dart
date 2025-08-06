@@ -1,7 +1,8 @@
 import 'package:grabit/features/common/domain/entities/product_entity.dart';
 
 class ProductModel {
-  final String sku;
+  final String id; // Changed from sku to id
+  final String? sku; // Made optional since it’s not the primary key
   final String name;
   final String imageUrl;
   final int rating;
@@ -10,7 +11,8 @@ class ProductModel {
   final String discount;
 
   ProductModel({
-    required this.sku,
+    required this.id,
+    this.sku, // Nullable since it’s not the primary key
     required this.name,
     required this.imageUrl,
     required this.rating,
@@ -21,7 +23,8 @@ class ProductModel {
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      sku: json['sku'] ?? '',
+      id: json['id'] ?? '', // Use id from JSON
+      sku: json['sku'], // Optional, null if not provided
       name: json['product_name'] ?? '',
       imageUrl: json['product_image'] ?? '',
       rating: json['product_rating'] ?? 0,
@@ -31,9 +34,23 @@ class ProductModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id, // Map id to the primary key column
+      'sku': sku,
+      'product_name': name,
+      'product_image': imageUrl,
+      'product_rating': rating,
+      'actual_price': actualPrice,
+      'offer_price': offerPrice,
+      'discount': discount,
+    };
+  }
+
   ProductEntity toEntity() {
     return ProductEntity(
-      sku: sku,
+      id: id, // Add id to ProductEntity
+      sku: sku ?? '',
       name: name,
       imageUrl: imageUrl,
       rating: rating,

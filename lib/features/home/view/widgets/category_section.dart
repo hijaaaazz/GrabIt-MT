@@ -1,11 +1,12 @@
 
 // lib/features/home/widgets/category_section.dart
 import 'package:flutter/material.dart';
+import 'package:grabit/features/common/data/category_model.dart';
 import 'package:grabit/features/common/domain/entities/category_entity.dart';
 import 'category_card.dart';
 
 class CategorySection extends StatelessWidget {
-  final List<CategoryEntity> categories;
+  final List<CategoryModel> categories;
 
   const CategorySection({
     Key? key,

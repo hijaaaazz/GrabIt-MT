@@ -1,83 +1,102 @@
-// lib/features/home/widgets/hero_banner.dart
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import '../../model/banner_model.dart';
 
-class HeroBanner extends StatelessWidget {
-  const HeroBanner({Key? key}) : super(key: key);
+class HeroBanner extends StatefulWidget {
+  final List<AppBannerModel> banners;
+
+  const HeroBanner({super.key, required this.banners});
+
+  @override
+  State<HeroBanner> createState() => _HeroBannerState();
+}
+
+class _HeroBannerState extends State<HeroBanner> {
+  int _current = 0;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    
-    return Container(
-      height: screenHeight * (110 / 786.7),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFF6B6B), Color(0xFFE53935)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    if (widget.banners.isEmpty) return const SizedBox();
+
+    log("First Banner URL: ${widget.banners[0].imageUrl}");
+
+    return SizedBox(
+      width: screenWidth,
+      height: screenHeight *0.12,
       child: Stack(
+        alignment: Alignment.center,
         children: [
-          // Background people image area
-          Positioned(
-            left: screenWidth * (16 / 360.0),
-            top: screenHeight * (16 / 786.7),
-            child: Container(
-              width: screenWidth * (120 / 360.0),
-              height: screenHeight * (68 / 786.7),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(screenWidth * (4 / 360.0)),
-              ),
-            ),
-          ),
-          // 70% OFF Badge
-          Positioned(
-            right: screenWidth * (80 / 360.0),
-            top: screenHeight * (16 / 786.7),
-            child: Container(
-              width: screenWidth * (40 / 360.0),
-              height: screenWidth * (40 / 360.0),
-              decoration: const BoxDecoration(
-                color: Colors.orange,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '70%\nOFF',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenWidth * (10 / 360.0),
-                    fontWeight: FontWeight.bold,
-                  ),
+          // Carousel Image
+          Stack(
+            children: [
+              CarouselSlider.builder(
+                itemCount: widget.banners.length,
+                itemBuilder: (context, index, _) {
+                  final banner = widget.banners[index];
+                  return Container(
+                    width: screenWidth,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(screenWidth * (8 / 360)),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Stack(
+                      children: [
+                        Image.network(
+                          banner.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Center(
+                            child: Icon(Icons.broken_image, color: Colors.grey, size: 40),
+                          ),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                          },
+                        ),
+                        Text(banner.imageUrl.split('_').last)
+                      ],
+                    ),
+                  );
+                },
+                options: CarouselOptions(
+                  height: screenHeight * (100 / 786.7),
+                  viewportFraction: 1.0,
+                  autoPlay: true,
+                  onPageChanged: (index, _) {
+                    setState(() => _current = index);
+                  },
                 ),
               ),
-            ),
+             
+            ],
           ),
-          // MOONSOON DEALS Badge
-          Positioned(
-            right: screenWidth * (16 / 360.0),
-            bottom: screenHeight * (16 / 786.7),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * (8 / 360.0),
-                vertical: screenHeight * (4 / 786.7),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.red[700],
-                borderRadius: BorderRadius.circular(screenWidth * (4 / 360.0)),
-              ),
-              child: Text(
-                'MOONSOON\nDEALS',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: screenWidth * (10 / 360.0),
-                  fontWeight: FontWeight.bold,
-                ),
+          
+      
+          // Dot Indicator at Top Center
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom:  8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: widget.banners.asMap().entries.map((entry) {
+                  return Container(
+                    width: _current == entry.key ? 10.0 : 6.0,
+                    height: 6.0,
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _current == entry.key
+                          ? const Color.fromARGB(255, 255, 255, 255)
+                          : const Color.fromARGB(255, 199, 199, 199),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ),

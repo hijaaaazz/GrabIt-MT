@@ -1,13 +1,18 @@
 class AppBannerModel {
-  final String title;
+  final String? id; // Nullable
   final String imageUrl;
 
-  AppBannerModel({required this.title, required this.imageUrl});
+  AppBannerModel({this.id, required this.imageUrl});
 
   factory AppBannerModel.fromJson(Map<String, dynamic> json) {
     return AppBannerModel(
-      title: json['title'] ?? '',
+      id: json['id']?.toString(), // Safe conversion to string
       imageUrl: json['image_url'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'image_url': imageUrl,
+      };
 }
