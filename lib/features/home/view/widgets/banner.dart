@@ -24,7 +24,6 @@ class _HeroBannerState extends State<HeroBanner> {
 
     if (widget.banners.isEmpty) return const SizedBox();
 
-    log("First Banner URL: ${widget.banners[0].imageUrl}");
 
     return SizedBox(
       width: screenWidth,
@@ -52,11 +51,13 @@ class _HeroBannerState extends State<HeroBanner> {
 
 CachedImageViewer(
   imageUrl: banner.imageUrl,
+  width: screenWidth,
   fit: BoxFit.cover,
 ),
+Text(banner.title)
 
 
-                        Text(banner.imageUrl.split('_').last)
+
                       ],
                     ),
                   );

@@ -12,14 +12,14 @@ class DBHelper {
   }
 
   static Future<void> clearDatabase() async {
-    final path = join(await getDatabasesPath(), 'grabit.db3'); // Fixed name
+    final path = join(await getDatabasesPath(), 'grabitsections'); // Fixed name
     await deleteDatabase(path);
     _db = null;
     log('Database cleared successfully');
   }
 
   static Future<Database> initDb() async {
-    final path = join(await getDatabasesPath(), 'grabit.db3'); // Fixed name
+    final path = join(await getDatabasesPath(), 'grabitsections'); // Fixed name
     return await openDatabase(
       path,
       version: 1,

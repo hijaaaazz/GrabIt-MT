@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CachedImageViewer extends StatelessWidget {
   final String imageUrl;
   final BoxFit fit;
   final double? width;
   final double? height;
-  final bool isIconStyle; // For small icons like logo or icon images
+  final bool isIconStyle;
   final double errorIconSize;
 
   const CachedImageViewer({
@@ -26,29 +27,15 @@ class CachedImageViewer extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
-      placeholder: (context, url) => isIconStyle
-          ? SizedBox(
-              height: 16,
-              width: 16,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8BC34A)),
-                ),
-              ),
-            )
-          : Container(
-              color: Colors.grey[200],
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8BC34A)),
-                ),
-              ),
-            ),
+      placeholder: (context, url) => Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          width: width ?? double.infinity,
+          height: height ?? 200,
+          color: Colors.white,
+        ),
+      ),
       errorWidget: (context, url, error) => isIconStyle
           ? const Icon(Icons.broken_image, size: 16, color: Colors.grey)
           : Container(
