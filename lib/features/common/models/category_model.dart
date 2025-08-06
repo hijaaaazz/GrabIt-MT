@@ -1,4 +1,3 @@
-import 'package:grabit/features/common/domain/entities/category_entity.dart';
 
 class CategoryModel {
   final String? id; // Changed to String? to match DB and JSON
@@ -27,21 +26,4 @@ class CategoryModel {
     };
   }
 
-  // Convert to Entity
-  CategoryEntity toEntity() {
-    return CategoryEntity(
-      id: id,
-      name: name,
-      imageUrl: imageUrl,
-    );
-  }
-
-  // From Entity
-  factory CategoryModel.fromEntity(CategoryEntity entity) {
-    return CategoryModel(
-      id: entity.id,
-      name: entity.name,
-      imageUrl: entity.imageUrl,
-    );
-  }
 }

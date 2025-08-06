@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grabit/features/common/view/cached_viewer.dart';
 
 class CategoryCard extends StatelessWidget {
   final String title;
@@ -28,15 +29,14 @@ class CategoryCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(
-              icon,
-              height: screenHeight * 0.05, // optional size control
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Icon(
-                Icons.image_not_supported,
-                color: Colors.grey,
-              ),
-            ),
+CachedImageViewer(
+  imageUrl: icon,
+  height: screenHeight * 0.05,
+  fit: BoxFit.contain,
+  isIconStyle: true,
+),
+
+
             SizedBox(height: screenHeight * (4 / 786.7)),
             Text(
               title,

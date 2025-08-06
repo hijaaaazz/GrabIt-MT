@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:grabit/features/common/view/cached_viewer.dart';
 
 class PromoBanner extends StatelessWidget {
   final String imageUrl;
@@ -18,26 +20,14 @@ class PromoBanner extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: Colors.grey[300],
-              alignment: Alignment.center,
-              child: const Icon(Icons.broken_image, color: Colors.grey, size: 40),
-            );
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
-              color: Colors.grey[200],
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(),
-            );
-          },
-        ),
+        child: CachedImageViewer(
+  imageUrl: imageUrl,
+  width: double.infinity,
+  height: screenHeight * (70 / 786.7),
+  fit: BoxFit.cover,
+),
+
+
       ),
     );
   }

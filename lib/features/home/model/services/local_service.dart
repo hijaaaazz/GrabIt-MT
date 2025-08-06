@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:grabit/core/helper/db_helper.dart';
-import 'package:grabit/features/common/data/product_model.dart';
-import 'package:grabit/features/common/data/category_model.dart';
+import 'package:grabit/features/common/models/product_model.dart';
+import 'package:grabit/features/common/models/category_model.dart';
 import 'package:grabit/features/home/model/banner_model.dart';
 import 'package:sqflite/sqflite.dart';
 

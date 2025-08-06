@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:grabit/features/common/view/cached_viewer.dart';
 import '../../model/banner_model.dart';
 
 class HeroBanner extends StatefulWidget {
@@ -47,17 +49,13 @@ class _HeroBannerState extends State<HeroBanner> {
                     clipBehavior: Clip.antiAlias,
                     child: Stack(
                       children: [
-                        Image.network(
-                          banner.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Center(
-                            child: Icon(Icons.broken_image, color: Colors.grey, size: 40),
-                          ),
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-                          },
-                        ),
+
+CachedImageViewer(
+  imageUrl: banner.imageUrl,
+  fit: BoxFit.cover,
+),
+
+
                         Text(banner.imageUrl.split('_').last)
                       ],
                     ),

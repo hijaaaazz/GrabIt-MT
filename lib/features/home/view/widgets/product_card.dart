@@ -1,7 +1,9 @@
 
 // lib/features/home/widgets/product_card.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:grabit/features/common/data/product_model.dart';
+import 'package:grabit/features/common/models/product_model.dart';
+import 'package:grabit/features/common/view/cached_viewer.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
@@ -44,20 +46,15 @@ class ProductCard extends StatelessWidget {
   borderRadius: BorderRadius.vertical(
     top: Radius.circular(screenWidth * (8 / 360.0)),
   ),
-  child: Image.network(
-    product.imageUrl,
-    width: double.infinity,
-    height: screenHeight * (70 / 786.7),
-    fit: BoxFit.cover,
-    errorBuilder: (context, error, stackTrace) {
-      return Container(
-        color: Colors.grey.shade300,
-        child: Center(
-          child: Icon(Icons.broken_image, color: Colors.grey),
-        ),
-      );
-    },
-  ),
+  child:
+  CachedImageViewer(
+  imageUrl: product.imageUrl,
+  width: double.infinity,
+  height: screenHeight * (70 / 786.7),
+  fit: BoxFit.cover,
+),
+
+
 ),
             ),
             

@@ -1,5 +1,3 @@
-import 'package:grabit/features/common/domain/entities/product_entity.dart';
-
 class ProductModel {
   final String id; // Changed from sku to id
   final String? sku; // Made optional since it’s not the primary key
@@ -47,16 +45,4 @@ class ProductModel {
     };
   }
 
-  ProductEntity toEntity() {
-    return ProductEntity(
-      id: id, // Add id to ProductEntity
-      sku: sku ?? '',
-      name: name,
-      imageUrl: imageUrl,
-      rating: rating,
-      actualPrice: actualPrice,
-      offerPrice: offerPrice,
-      discount: discount,
-    );
-  }
 }
