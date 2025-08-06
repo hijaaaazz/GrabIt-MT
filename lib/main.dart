@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:grabit/core/routes/app_routes.dart';
+import 'package:grabit/features/main/viewmodel/main_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const GrabItApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class GrabItApp extends StatelessWidget {
+  const GrabItApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GrabIt',
-      theme: ThemeData(
-       
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    return MultiProvider(
+      providers: [
+        Provider(create: (_)=>MainViewModel())
+      ],
+      child: MaterialApp(
+        title: 'GrabIt',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        ),
+        initialRoute: Routes.splash,
+        onGenerateRoute: AppRoutes.generateRoute,
       ),
-      home:SplashPage()
     );
-  }
-}
-class SplashPage extends StatelessWidget {
-  const SplashPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold();
   }
 }
