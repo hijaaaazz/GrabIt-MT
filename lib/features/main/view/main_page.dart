@@ -1,66 +1,65 @@
 // views/main_page.dart
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:grabit/core/routes/constants/app_colors.dart';
 import 'package:grabit/features/home/view/page/home.dart';
 import 'package:grabit/features/main/view/widgets/bottom_navigation.dart';
 import 'package:grabit/features/main/viewmodel/main_viewmodel.dart';
-import 'package:motion_tab_bar/MotionTabBar.dart';
 import 'package:provider/provider.dart';
+
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<MainViewModel>();
-
-    return Scaffold(
-      body: IndexedStack(
-        index: viewModel.currentIndex,
-        children: const [
-          HomePage(),
-          CartPage(),
-          ExplorePage(),
-          ProfilePage(),
-        ],
-      ),
-      bottomNavigationBar:
-      EnhancedBottomNavBar(
-        currentIndex: viewModel.currentIndex,
-        onTap:(index){
-          viewModel.setTab(index);
-        },
-        items: [
-          NavBarItem(icon: Icons.abc, label: "buyhwebu"),
-          NavBarItem(icon: Icons.abc, label: "buyhwebu"),
-          NavBarItem(icon: Icons.abc, label: "buyhwebu"),
-          NavBarItem(icon: Icons.abc, label: "buyhwebu"),
-          NavBarItem(icon: Icons.abc, label: "buyhwebu")
-        ],
-      )
-      //  MotionTabBar(
-      //   labels: const ["Home", "Cart", "Explore", "Profile"],
-      //   initialSelectedTab: "Home",
-      
-      //   tabSize: 20,
+    log('MainPage.build called');
+    
+    return Consumer<MainViewModel>(
+      builder: (context, viewModel, child) {
+        log('Consumer builder called with currentIndex: ${viewModel.currentIndex}');
         
-      //   icons: const [
-      //     Icons.home,
-      //     Icons.shopping_cart,
-      //     Icons.search,
-      //     Icons.person,
-      //   ],
-        
-      //   tabIconColor: Colors.grey,
-      //   tabSelectedColor: AppColors.primary,
-      //   textStyle: const TextStyle(color: Colors.black),
-      //   onTabItemSelected: (int index) {
-      //     viewModel.setTab(index);
-      //   },
-      // ),
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: IndexedStack(
+                  index: viewModel.currentIndex,
+                  children: const [
+                    HomePage(),
+                    CategoryPage(), // Changed from CartPage to match nav
+                    CartPage(),
+                    OffersPage(), // Changed from ExplorePage to match nav
+                    ProfilePage(), // This matches the Account nav item
+                  ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ImprovedBottomNavBar(
+                  items: [
+                     NavItem(icon: Icons.home, label: 'Home'),
+                    NavItem(icon: Icons.grid_view, label: 'Category'),
+                    NavItem(icon: Icons.shopping_cart, label: 'Cart'),
+                    NavItem(icon: Icons.local_offer, label: 'Offers'),
+                    NavItem(icon: Icons.person, label: 'Account'),
+                  ],
+                  currentIndex: viewModel.currentIndex,
+                  onTap: (index) {
+                    log('onTap called with index: $index');
+                    viewModel.setTab(index);
+                  },
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
+
 
 
 
@@ -76,6 +75,24 @@ class CartPage extends StatelessWidget {
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+
+class CategoryPage extends StatelessWidget {
+  const CategoryPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+class OffersPage extends StatelessWidget {
+  const OffersPage({super.key});
 
   @override
   Widget build(BuildContext context) {

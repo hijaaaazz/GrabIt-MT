@@ -14,7 +14,7 @@ class GrabItApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (_)=>MainViewModel())
+        ChangeNotifierProvider(create: (_) => MainViewModel()),
       ],
       child: MaterialApp(
         title: 'GrabIt',
