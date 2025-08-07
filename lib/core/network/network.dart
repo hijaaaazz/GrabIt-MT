@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 abstract class NetworkInfo {
@@ -5,18 +7,19 @@ abstract class NetworkInfo {
 }
 
 class NetworkInfoImpl implements NetworkInfo {
-  NetworkInfoImpl();
+  @override
+  Future<bool> get isConnected async {
+    final connectivityResult = await Connectivity().checkConnectivity();
 
- @override
-Future<bool> get isConnected async {
-  final results = await Connectivity().checkConnectivity();
+    // Not connected to WiFi or mobile
+    if (connectivityResult == ConnectivityResult.none) return false;
 
-  // Check if at least one of the connection types is WiFi or mobile
-  return results.any(
-    (result) =>
-        result == ConnectivityResult.mobile ||
-        result == ConnectivityResult.wifi,
-  );
-}
-
+    // Try to lookup a reliable host to confirm actual internet access
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
 }

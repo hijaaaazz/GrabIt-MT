@@ -12,7 +12,6 @@ class LocalStorage {
     try {
       final db = await DBHelper.database;
 
-      // Fetch banners
       final bannerMaps = await db.query('banners', orderBy: 'section_order ASC');
       final banners = bannerMaps.map((map) => AppBannerModel.fromJson({
             'id': map['id']?.toString() ?? '',
@@ -111,7 +110,6 @@ class LocalStorage {
       ].where((section) => section.contents.isNotEmpty).toList()
         ..sort((a, b) => a.order.compareTo(b.order));
 
-      // ローカルデータがない場合のチェック
       if (sections.isEmpty) {
         log('No data found in local storage');
         return Left('Please turn network on');
@@ -130,7 +128,6 @@ class LocalStorage {
       final db = await DBHelper.database;
       final batch = db.batch();
 
-      // Clear existing data
       batch.delete('banners');
       batch.delete('categories');
       batch.delete('single_banner');
