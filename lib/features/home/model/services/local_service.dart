@@ -37,7 +37,7 @@ class LocalStorage {
         log('Retrieved category: id=${map['id']}, name=${map['name']}, image_url=${map['image_url']}, section_id=$sectionId, section_title=$sectionTitle');
         final category = CategoryModel.fromJson({
           'id': map['id']?.toString() ?? '',
-          'name': map['name']?.toString() ?? 'Unnamed Category', // Ensure non-empty name
+          'name': map['name']?.toString() ?? 'Unnamed Category',
           'image_url': map['image_url']?.toString() ?? '',
         });
 
@@ -45,7 +45,7 @@ class LocalStorage {
           categorySections[sectionId] = SectionModel(
             id: sectionId,
             type: 'categories',
-            title: sectionTitle, // Use stored section_title
+            title: sectionTitle,
             contents: [],
             order: sectionOrder,
           );
@@ -105,10 +105,17 @@ class LocalStorage {
       final sections = [
         bannerSection,
         ...categorySections.values,
+     
         singleBannerSection,
         ...productSections.values,
       ].where((section) => section.contents.isNotEmpty).toList()
         ..sort((a, b) => a.order.compareTo(b.order));
+
+      // ローカルデータがない場合のチェック
+      if (sections.isEmpty) {
+        log('No data found in local storage');
+        return Left('Please turn network on');
+      }
 
       log('Retrieved ${sections.length} sections from local storage: ${sections.map((s) => "${s.type} (id: ${s.id}, title: ${s.title}, order: ${s.order})").toList()}');
       return Right(sections);

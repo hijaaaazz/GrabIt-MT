@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grabit/core/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 import 'package:grabit/features/home/viewmodel/home_viewmodel.dart';
 import 'package:grabit/features/home/view/widgets/skelton/category_section.dart';
@@ -20,18 +21,15 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<HomeViewModel>(context, listen: false);
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // Trigger data loading only once when the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (viewModel.isLoading && viewModel.sections.isEmpty) {
-        viewModel.loadHomeData();
-      }
-    });
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(screenHeight * (80 / 786.7)), // Custom height from HomeHeader
+        child: const HomeHeader(),
+      ),
       body: Consumer<HomeViewModel>(
         builder: (context, viewModel, _) {
           if (viewModel.errorMessage != null && !viewModel.isLoading && viewModel.sections.isEmpty) {
@@ -49,99 +47,94 @@ class HomePage extends StatelessWidget {
             );
           }
 
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const HomeHeader(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ...viewModel.sections.map((section) {
-                        final isSectionEmpty = section.contents.isEmpty;
-                        switch (section.type) {
-                          case 'banner_slider':
-                            List<AppBannerModel> banners = isSectionEmpty
-                                ? []
-                                : section.contents.whereType<AppBannerModel>().toList();
-                            return AnimatedSwitcher(
+          return RefreshIndicator(
+            color: AppColors.primary,
+            backgroundColor: Colors.white,
+            onRefresh: () async {
+              await viewModel.loadHomeData();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(), // Ensure scrollable for RefreshIndicator
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  ...viewModel.sections.map((section) {
+                    final isSectionEmpty = section.contents.isEmpty;
+                    switch (section.type) {
+                      case 'banner_slider':
+                        List<AppBannerModel> banners = isSectionEmpty
+                            ? []
+                            : section.contents.whereType<AppBannerModel>().toList();
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: viewModel.isLoading || isSectionEmpty
+                              ? const HeroBannerShimmer()
+                              : HeroBanner(banners: banners),
+                        );
+                      case 'categories':
+                        List<CategoryModel> categories = isSectionEmpty
+                            ? []
+                            : section.contents.whereType<CategoryModel>().toList();
+                        return Column(
+                          children: [
+                            const SectionHeader(title: "Categories"),
+                            AnimatedSwitcher(
                               duration: const Duration(milliseconds: 300),
                               child: viewModel.isLoading || isSectionEmpty
-                                  ? const HeroBannerShimmer()
-                                  : HeroBanner(banners: banners),
-                            );
-                          case 'categories':
-                            List<CategoryModel> categories = isSectionEmpty
-                                ? []
-                                : section.contents.whereType<CategoryModel>().toList();
-                            return Column(
-                              children: [
-                                const SectionHeader(title: "Categories"),
-                                AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 300),
-                                  child: viewModel.isLoading || isSectionEmpty
-                                      ? const CategorySectionShimmer()
-                                      : CategorySection(categories: categories),
-                                ),
-                              ],
-                            );
-                          case 'banner_single':
-                            final banner = isSectionEmpty
-                                ? null
-                                : section.contents.whereType<AppBannerModel>().firstOrNull;
-                            return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              child: viewModel.isLoading || isSectionEmpty || banner == null
-                                  ? const PromoBannerShimmer()
-                                  : PromoBanner(imageUrl: banner.imageUrl),
-                            );
-                          case 'products':
-                            List<ProductModel> products = isSectionEmpty
-                                ? []
-                                : section.contents.whereType<ProductModel>().toList();
-                            return Column(
-                              children: [
-                                SectionHeader(title: section.title ?? "Products"),
-                                AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 300),
-                                  child: viewModel.isLoading || isSectionEmpty
-                                      ? const ProductListShimmer()
-                                      : ProductListSection(products: products),
-                                ),
-                              ],
-                            );
-                          default:
-                            return const SizedBox.shrink();
-                        }
-                      }).toList(),
-                      if (viewModel.sections.isEmpty && viewModel.isLoading)
-                        const Column(
-                          children: [
-                            HeroBannerShimmer(),
-                            SectionHeader(title: "Products"),
-                            ProductListShimmer(),
-                            PromoBannerShimmer(),
-                            SectionHeader(title: "Categories"),
-                            CategorySectionShimmer(),
-                            
-                            SectionHeader(title: "Products"),
-                            ProductListShimmer(),
+                                  ? const CategorySectionShimmer()
+                                  : CategorySection(categories: categories),
+                            ),
                           ],
-                        ),
-                      SizedBox(height: screenHeight * 0.05),
-                    ],
-                  ),
-                ),
+                        );
+                      case 'banner_single':
+                        final banner = isSectionEmpty
+                            ? null
+                            : section.contents.whereType<AppBannerModel>().firstOrNull;
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: viewModel.isLoading || isSectionEmpty || banner == null
+                              ? const PromoBannerShimmer()
+                              : PromoBanner(imageUrl: banner.imageUrl),
+                        );
+                      case 'products':
+                        List<ProductModel> products = isSectionEmpty
+                            ? []
+                            : section.contents.whereType<ProductModel>().toList();
+                        return Column(
+                          children: [
+                            SectionHeader(title: section.title),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              child: viewModel.isLoading || isSectionEmpty
+                                  ? const ProductListShimmer()
+                                  : ProductListSection(products: products),
+                            ),
+                          ],
+                        );
+                      default:
+                        return const SizedBox.shrink();
+                    }
+                  }).toList(),
+                  if (viewModel.sections.isEmpty && viewModel.isLoading)
+                    const Column(
+                      children: [
+                        HeroBannerShimmer(),
+                        SectionHeader(title: "Products"),
+                        ProductListShimmer(),
+                        PromoBannerShimmer(),
+                        SectionHeader(title: "Categories"),
+                        CategorySectionShimmer(),
+                        SectionHeader(title: "Products"),
+                        ProductListShimmer(),
+                      ],
+                    ),
+                  SizedBox(height: screenHeight * 0.05),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),
     );
   }
-}
-
-extension IterableExtension<T> on Iterable<T> {
-  T? get firstOrNull => isEmpty ? null : first;
 }

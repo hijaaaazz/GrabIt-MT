@@ -48,6 +48,8 @@ class HomeHeader extends StatelessWidget {
                       SizedBox(width: screenWidth * (12 / 360.0)),
                       Expanded(
                         child: TextField(
+                          cursorHeight: 10,
+                          cursorWidth:1.5 ,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Search products...',

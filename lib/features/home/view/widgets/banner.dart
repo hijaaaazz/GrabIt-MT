@@ -47,17 +47,20 @@ class _HeroBannerState extends State<HeroBanner> {
                     child: Stack(
                       children: [
 
-CachedImageViewer(
-  imageUrl: banner.imageUrl,
-  width: screenWidth,
-  fit: BoxFit.cover,
-),
-Align(
-  alignment: Alignment.center,
-  child: Text(banner.title.split('- ').last,style: GoogleFonts.labrada(),))
-
-
-
+                        CachedImageViewer(
+                          imageUrl: banner.imageUrl,
+                          width: screenWidth,
+                          fit: BoxFit.cover,
+                        ),
+                        Positioned.fill(child: Container(color: const Color.fromARGB(103, 0, 0, 0),)),
+                        Align(
+                          alignment: Alignment.center,
+                          child: 
+                          Text(banner.title.split('- ').last,
+                          style: GoogleFonts.outfit(
+                            color: const Color.fromARGB(255, 197, 255, 130),
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold),))
                       ],
                     ),
                   );

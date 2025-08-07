@@ -2,6 +2,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:grabit/features/home/view/page/home.dart';
 import 'package:grabit/features/main/view/widgets/bottom_navigation.dart';
 import 'package:grabit/features/main/viewmodel/main_viewmodel.dart';
@@ -30,10 +31,10 @@ class MainPage extends StatelessWidget {
                     index: viewModel.currentIndex,
                     children: const [
                       HomePage(),
-                      CategoryPage(), // Changed from CartPage to match nav
+                      CategoryPage(), 
                       CartPage(),
-                      OffersPage(), // Changed from ExplorePage to match nav
-                      ProfilePage(), // This matches the Account nav item
+                      OffersPage(), 
+                      ProfilePage(), 
                     ],
                   ),
                 ),
@@ -67,50 +68,73 @@ class MainPage extends StatelessWidget {
 
 
 
-
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const StyledPlaceholder(title: 'Cart Page');
   }
 }
-
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const StyledPlaceholder(title: 'Explore Page');
   }
 }
-
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const StyledPlaceholder(title: 'Category Page');
   }
 }
+
 class OffersPage extends StatelessWidget {
   const OffersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const StyledPlaceholder(title: 'Offers Page');
   }
 }
-
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const StyledPlaceholder(title: 'Profile Page');
+  }
+}
+
+class StyledPlaceholder extends StatelessWidget {
+  final String title;
+  const StyledPlaceholder({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Container(
+      padding: const EdgeInsets.all(32),
+      alignment: Alignment.center,
+      child: Text(
+        title,
+        style: GoogleFonts.poppins(
+          fontSize: 26,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey[700],
+        ),
+        textAlign: TextAlign.center,
+      ),
+    )
+    );
+    
   }
 }

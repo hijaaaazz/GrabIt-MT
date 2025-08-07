@@ -1,6 +1,5 @@
 
 // lib/features/home/widgets/product_card.dart
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:grabit/features/home/model/product_model.dart';
 import 'package:grabit/features/home/view/widgets/cached_viewer.dart';
@@ -65,21 +64,24 @@ class ProductCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Sale Badge
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * (4 / 360.0),
-                        vertical: screenHeight * (1 / 786.7),
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(screenWidth * (2 / 360.0)),
-                      ),
-                      child: Text(
-                        'Sale ${product.discount}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: screenWidth * (8 / 360.0),
-                          fontWeight: FontWeight.bold,
+                    Visibility(
+                      visible: product.actualPrice != product.offerPrice,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * (4 / 360.0),
+                          vertical: screenHeight * (1 / 786.7),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(screenWidth * (2 / 360.0)),
+                        ),
+                        child: Text(
+                          'Sale ${product.discount}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidth * (8 / 360.0),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
