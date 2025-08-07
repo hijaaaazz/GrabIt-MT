@@ -1,7 +1,8 @@
+import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:grabit/core/helper/db_helper.dart';
-import 'package:grabit/features/common/models/product_model.dart';
-import 'package:grabit/features/common/models/category_model.dart';
+import 'package:grabit/features/home/model/product_model.dart';
+import 'package:grabit/features/home/model/category_model.dart';
 import 'package:grabit/features/home/model/banner_model.dart';
 import 'package:grabit/features/home/model/section_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,167 +13,232 @@ class LocalStorage {
       final db = await DBHelper.database;
 
       // Fetch banners
-      final bannerMaps = await db.query('banners');
+      final bannerMaps = await db.query('banners', orderBy: 'section_order ASC');
       final banners = bannerMaps.map((map) => AppBannerModel.fromJson({
-            'id': map['id'],
-            'title': map['title'],
-            'image_url': map['image_url'],
+            'id': map['id']?.toString() ?? '',
+            'title': map['title']?.toString() ?? '',
+            'image_url': map['image_url']?.toString() ?? '',
           })).toList();
       final bannerSection = SectionModel(
-        id: 'banner_slider_1',
+        id: '1',
         type: 'banner_slider',
-        title: 'Banners',
+        title: 'Featured Banners',
         contents: banners,
+        order: bannerMaps.isNotEmpty ? (bannerMaps.first['section_order'] as int?) ?? 0 : 0,
       );
 
-      // Fetch categories
-      final categoryMaps = await db.query('categories');
-      final categories = categoryMaps.map((map) => CategoryModel.fromJson({
-            'id': map['id'],
-            'name': map['title'],
-            'image_url': map['image_url'],
-          })).toList();
-      final categorySection = SectionModel(
-        id: 'catagories_1',
-        type: 'catagories',
-        title: 'Categories',
-        contents: categories,
-      );
+      // Fetch categories and group by section_id
+      final categoryMaps = await db.query('categories', orderBy: 'section_order ASC');
+      final categorySections = <String, SectionModel>{};
+      for (var map in categoryMaps) {
+        final sectionId = map['section_id']?.toString() ?? '4';
+        final sectionTitle = map['section_title']?.toString() ?? 'Top Categories';
+        final sectionOrder = (map['section_order'] as int?) ?? 0;
+        log('Retrieved category: id=${map['id']}, name=${map['name']}, image_url=${map['image_url']}, section_id=$sectionId, section_title=$sectionTitle');
+        final category = CategoryModel.fromJson({
+          'id': map['id']?.toString() ?? '',
+          'name': map['name']?.toString() ?? 'Unnamed Category', // Ensure non-empty name
+          'image_url': map['image_url']?.toString() ?? '',
+        });
+
+        if (!categorySections.containsKey(sectionId)) {
+          categorySections[sectionId] = SectionModel(
+            id: sectionId,
+            type: 'categories',
+            title: sectionTitle, // Use stored section_title
+            contents: [],
+            order: sectionOrder,
+          );
+        }
+        categorySections[sectionId]!.contents.add(category);
+      }
 
       // Fetch single banner
-      final singleBannerMaps = await db.query('single_banner', limit: 1);
+      final singleBannerMaps = await db.query('single_banner', orderBy: 'section_order ASC');
       final singleBanners = singleBannerMaps.map((map) => AppBannerModel.fromJson({
-            'id': map['id'],
-            'title': map['title'],
-            'image_url': map['image_url'],
+            'id': map['id']?.toString() ?? '',
+            'title': map['title']?.toString() ?? '',
+            'image_url': map['image_url']?.toString() ?? '',
           })).toList();
       final singleBannerSection = SectionModel(
-        id: 'banner_single_1',
+        id: '3',
         type: 'banner_single',
-        title: 'Single Banner',
+        title: 'Special Offer',
         contents: singleBanners,
+        order: singleBannerMaps.isNotEmpty ? (singleBannerMaps.first['section_order'] as int?) ?? 0 : 0,
       );
 
-      // Fetch popular products
-final popularProductMaps = await db.query('popular_products');
-final popularProducts = popularProductMaps.map((map) => ProductModel.fromJson({
-  'id': map['id']?.toString() ?? '',
-  'sku': map['sku']?.toString(),
-  'product_name': map['product_name']?.toString() ?? '',
-  'product_image': map['product_image']?.toString() ?? '',
-  'product_rating': map['product_rating'] ?? 0,
-  'actual_price': map['actual_price']?.toString() ?? '', // Keep as String
-  'offer_price': map['offer_price']?.toString(), // Keep as String, nullable
-  'discount': map['discount']?.toString(), // Keep as String, nullable
-})).toList();
-final popularProductSection = SectionModel(
-  id: 'products_popular_1',
-  type: 'products',
-  title: 'Most Popular',
-  contents: popularProducts,
-);
+      // Fetch products and group by section
+      final productMaps = await db.query('products', orderBy: 'section_order ASC');
+      final productSections = <String, SectionModel>{};
+      for (var map in productMaps) {
+        final sectionId = map['section_id']?.toString() ?? '';
+        final sectionTitle = map['section_title']?.toString() ?? '';
+        final sectionOrder = (map['section_order'] as int?) ?? 0;
+        if (sectionId.isEmpty) {
+          log('Warning: Product with id ${map['id']} has empty section_id');
+          continue;
+        }
+        final product = ProductModel.fromJson({
+          'id': map['id']?.toString() ?? '',
+          'sku': map['sku']?.toString(),
+          'product_name': map['product_name']?.toString() ?? '',
+          'product_image': map['product_image']?.toString() ?? '',
+          'product_rating': map['product_rating'] ?? 0,
+          'actual_price': map['actual_price']?.toString() ?? '',
+          'offer_price': map['offer_price']?.toString(),
+          'discount': map['discount']?.toString(),
+        });
 
-// Fetch featured products
-final featuredProductMaps = await db.query('featured_products');
-final featuredProducts = featuredProductMaps.map((map) => ProductModel.fromJson({
-  'id': map['id']?.toString() ?? '',
-  'sku': map['sku']?.toString(),
-  'product_name': map['product_name']?.toString() ?? '',
-  'product_image': map['product_image']?.toString() ?? '',
-  'product_rating': map['product_rating'] ?? 0,
-  'actual_price': map['actual_price']?.toString() ?? '', // Keep as String
-  'offer_price': map['offer_price']?.toString(), // Keep as String, nullable
-  'discount': map['discount']?.toString(), // Keep as String, nullable
-})).toList();
-final featuredProductSection = SectionModel(
-  id: 'products_featured_1',
-  type: 'products',
-  title: 'Best Sellers',
-  contents: featuredProducts,
-);
+        if (!productSections.containsKey(sectionId)) {
+          productSections[sectionId] = SectionModel(
+            id: sectionId,
+            type: 'products',
+            title: sectionTitle,
+            contents: [],
+            order: sectionOrder,
+          );
+        }
+        productSections[sectionId]!.contents.add(product);
+      }
 
-      return Right([
+      final sections = [
         bannerSection,
-        categorySection,
+        ...categorySections.values,
         singleBannerSection,
-        popularProductSection,
-        featuredProductSection,
-      ].where((section) => section.contents.isNotEmpty).toList());
-    } catch (e) {
+        ...productSections.values,
+      ].where((section) => section.contents.isNotEmpty).toList()
+        ..sort((a, b) => a.order.compareTo(b.order));
+
+      log('Retrieved ${sections.length} sections from local storage: ${sections.map((s) => "${s.type} (id: ${s.id}, title: ${s.title}, order: ${s.order})").toList()}');
+      return Right(sections);
+    } catch (e, stackTrace) {
+      log('Error in getHomeSections: $e', stackTrace: stackTrace);
       return Left("Local Storage Error: $e");
     }
   }
 
   Future<void> saveHomeSections(List<SectionModel> sections) async {
-    final db = await DBHelper.database;
-    final batch = db.batch();
+    try {
+      final db = await DBHelper.database;
+      final batch = db.batch();
 
-    for (var section in sections) {
-      switch (section.type) {
-        case 'banner_slider':
-          for (var content in section.contents) {
-            final banner = content as AppBannerModel;
-            batch.insert(
-              'banners',
-              {
-                'id': banner.id,
-                'title': banner.imageUrl,
-                'image_url': banner.imageUrl,
-              },
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-          }
-          break;
-        case 'catagories':
-          for (var content in section.contents) {
-            final category = content as CategoryModel;
-            batch.insert(
-              'categories',
-              {
-                'id': category.id,
-                'title': category.name,
-                'image_url': category.imageUrl,
-              },
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-          }
-          break;
-        case 'banner_single':
-          for (var content in section.contents) {
-            final banner = content as AppBannerModel;
-            batch.insert(
-              'single_banner',
-              {
-                'id': banner.id,
-                'title': banner.imageUrl,
-                'image_url': banner.imageUrl,
-              },
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-          }
-          break;
-        case 'products':
-          final table = section.title == 'Most Popular' ? 'popular_products' : 'featured_products';
-          for (var content in section.contents) {
-            final product = content as ProductModel;
-            batch.insert(
-              table,
-              {
-                'id': product.id,
-                'sku': product.id, // Assuming SKU is same as ID for simplicity
-                'product_name': product.name,
-                'product_image': product.imageUrl,
-                'product_rating': product.rating,
-                'actual_price': product.actualPrice,
-                'offer_price': product.offerPrice,
-                'discount': product.discount,
-              },
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-          }
-          break;
+      // Clear existing data
+      batch.delete('banners');
+      batch.delete('categories');
+      batch.delete('single_banner');
+      batch.delete('products');
+      log('Cleared existing data in all tables');
+
+      for (var i = 0; i < sections.length; i++) {
+        final section = sections[i];
+        if (section.id.isEmpty) {
+          log('Warning: Skipping section with null or empty ID: ${section.type}');
+          continue;
+        }
+        switch (section.type) {
+          case 'banner_slider':
+            for (var content in section.contents) {
+              final banner = content as AppBannerModel;
+              if (banner.id == null || banner.id!.isEmpty) {
+                log('Warning: Skipping banner with null or empty ID');
+                continue;
+              }
+              batch.insert(
+                'banners',
+                {
+                  'id': banner.id,
+                  'title': banner.title,
+                  'image_url': banner.imageUrl,
+                  'section_id': section.id,
+                  'section_order': i,
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              );
+            }
+            log('Prepared ${section.contents.length} banners for section ${section.id}');
+            break;
+          case 'categories':
+            for (var content in section.contents) {
+              final category = content as CategoryModel;
+              if (category.id == null || category.id!.isEmpty) {
+                log('Warning: Skipping category with null or empty ID');
+                continue;
+              }
+              log('Saving category: id=${category.id}, name=${category.name}, image_url=${category.imageUrl}, section_id=${section.id}, section_title=${section.title}');
+              batch.insert(
+                'categories',
+                {
+                  'id': category.id,
+                  'name': category.name,
+                  'image_url': category.imageUrl,
+                  'section_id': section.id,
+                  'section_title': section.title,
+                  'section_order': i,
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              );
+            }
+            log('Prepared ${section.contents.length} categories for section ${section.id}');
+            break;
+          case 'banner_single':
+            for (var content in section.contents) {
+              final banner = content as AppBannerModel;
+              if (banner.id == null || banner.id!.isEmpty) {
+                log('Warning: Skipping single banner with null or empty ID');
+                continue;
+              }
+              batch.insert(
+                'single_banner',
+                {
+                  'id': banner.id,
+                  'title': banner.title,
+                  'image_url': banner.imageUrl,
+                  'section_id': section.id,
+                  'section_order': i,
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              );
+            }
+            log('Prepared ${section.contents.length} single banners for section ${section.id}');
+            break;
+          case 'products':
+            for (var content in section.contents) {
+              final product = content as ProductModel;
+              if (product.id.isEmpty) {
+                log('Warning: Skipping product with empty ID');
+                continue;
+              }
+              batch.insert(
+                'products',
+                {
+                  'id': product.id,
+                  'sku': product.sku ?? product.id,
+                  'product_name': product.name,
+                  'product_image': product.imageUrl,
+                  'product_rating': product.rating,
+                  'actual_price': product.actualPrice,
+                  'offer_price': product.offerPrice,
+                  'discount': product.discount,
+                  'section_id': section.id,
+                  'section_title': section.title,
+                  'section_order': i,
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              );
+            }
+            log('Prepared ${section.contents.length} products for section ${section.id}');
+            break;
+          default:
+            log('Warning: Unknown section type: ${section.type}');
+        }
       }
+
+      await batch.commit(noResult: true);
+      log('Successfully committed batch to database');
+    } catch (e, stackTrace) {
+      log('Error in saveHomeSections: $e', stackTrace: stackTrace);
+      rethrow;
     }
-    await batch.commit(noResult: true);
   }
 }

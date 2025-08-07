@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:grabit/features/common/models/product_model.dart';
-import 'package:grabit/features/common/models/category_model.dart';
+import 'package:grabit/features/home/model/product_model.dart';
+import 'package:grabit/features/home/model/category_model.dart';
 import 'package:grabit/features/home/model/banner_model.dart';
 import 'package:grabit/features/home/model/section_model.dart';
 
@@ -31,12 +31,13 @@ class NetworkService {
                         'id': '${sectionId}_${e.key}',
                       }))
                   .toList(),
+              order: entry.key,
             );
-          case 'catagories':
-          Future.delayed(Duration(seconds: 10));
+          case 'categories':
+          case 'catagories': // Handle API typo
             return SectionModel(
               id: sectionId,
-              type: section['type'],
+              type: 'categories', // Normalize to 'categories'
               title: section['title'],
               contents: (section['contents'] as List)
                   .asMap()
@@ -46,6 +47,7 @@ class NetworkService {
                         'id': '${sectionId}_${e.key}',
                       }))
                   .toList(),
+              order: entry.key,
             );
           case 'banner_single':
             return SectionModel(
@@ -59,6 +61,7 @@ class NetworkService {
                   'image_url': section['image_url'],
                 })
               ],
+              order: entry.key,
             );
           case 'products':
             return SectionModel(
@@ -73,9 +76,16 @@ class NetworkService {
                         'id': '${sectionId}_${e.key}',
                       }))
                   .toList(),
+              order: entry.key,
             );
           default:
-            return SectionModel(id: sectionId, type: 'unknown', contents: []);
+            return SectionModel(
+              title: "",
+              id: sectionId,
+              type: 'unknown',
+              contents: [],
+              order: entry.key,
+            );
         }
       }).toList();
 

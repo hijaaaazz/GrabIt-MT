@@ -12,8 +12,8 @@ import 'package:grabit/features/home/view/widgets/product_list.dart';
 import 'package:grabit/features/home/view/widgets/promo_banner.dart';
 import 'package:grabit/features/home/view/widgets/section_header.dart';
 import 'package:grabit/features/home/model/banner_model.dart';
-import 'package:grabit/features/common/models/category_model.dart';
-import 'package:grabit/features/common/models/product_model.dart';
+import 'package:grabit/features/home/model/category_model.dart';
+import 'package:grabit/features/home/model/product_model.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
                                   ? const HeroBannerShimmer()
                                   : HeroBanner(banners: banners),
                             );
-                          case 'catagories':
+                          case 'categories':
                             List<CategoryModel> categories = isSectionEmpty
                                 ? []
                                 : section.contents.whereType<CategoryModel>().toList();

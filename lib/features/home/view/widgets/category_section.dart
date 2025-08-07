@@ -1,7 +1,7 @@
 
 // lib/features/home/widgets/category_section.dart
 import 'package:flutter/material.dart';
-import 'package:grabit/features/common/models/category_model.dart';
+import 'package:grabit/features/home/model/category_model.dart';
 import 'category_card.dart';
 
 class CategorySection extends StatelessWidget {

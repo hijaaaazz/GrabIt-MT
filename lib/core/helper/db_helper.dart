@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+
+
 class DBHelper {
   static Database? _db;
 
@@ -11,67 +13,63 @@ class DBHelper {
     return _db!;
   }
 
-  static Future<void> clearDatabase() async {
-    final path = join(await getDatabasesPath(), 'grabitsections'); // Fixed name
-    await deleteDatabase(path);
-    _db = null;
-    log('Database cleared successfully');
-  }
-
   static Future<Database> initDb() async {
-    final path = join(await getDatabasesPath(), 'grabitsections'); // Fixed name
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: (db, version) async {
-        print('Creating tables for database version $version');
-        await db.execute('''
-          CREATE TABLE banners(
-            id TEXT PRIMARY KEY,
-            title TEXT,
-            image_url TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE popular_products(
-            id TEXT PRIMARY KEY,
-            sku TEXT,
-            product_name TEXT,
-            product_image TEXT,
-            product_rating INTEGER,
-            actual_price TEXT,
-            offer_price TEXT,
-            discount TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE featured_products(
-            id TEXT PRIMARY KEY,
-            sku TEXT,
-            product_name TEXT,
-            product_image TEXT,
-            product_rating INTEGER,
-            actual_price TEXT,
-            offer_price TEXT,
-            discount TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE categories(
-            id TEXT PRIMARY KEY,
-            title TEXT,
-            image_url TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE single_banner(
-            id TEXT PRIMARY KEY,
-            title TEXT,
-            image_url TEXT
-          )
-        ''');
-        log('Tables created successfully');
-      },
-    );
-  }
+  final path = join(await getDatabasesPath(), 'grabit_app.db'); // Renamed from 'grabit_sections.db' to 'grabit_app.db'
+  return await openDatabase(
+    path,
+    version: 2,
+    onCreate: (db, version) async {
+      await db.execute('''
+        CREATE TABLE banners(
+          id TEXT PRIMARY KEY,
+          title TEXT,
+          image_url TEXT,
+          section_id TEXT,
+          section_order INTEGER
+        )
+      ''');
+      await db.execute('''
+        CREATE TABLE products(
+          id TEXT PRIMARY KEY,
+          sku TEXT,
+          product_name TEXT,
+          product_image TEXT,
+          product_rating INTEGER,
+          actual_price TEXT,
+          offer_price TEXT,
+          discount TEXT,
+          section_id TEXT,
+          section_title TEXT,
+          section_order INTEGER
+        )
+      ''');
+      await db.execute('''
+        CREATE TABLE categories(
+          id TEXT PRIMARY KEY,
+          name TEXT,
+          image_url TEXT,
+          section_id TEXT,
+          section_title TEXT,
+          section_order INTEGER
+        )
+      ''');
+      await db.execute('''
+        CREATE TABLE single_banner(
+          id TEXT PRIMARY KEY,
+          title TEXT,
+          image_url TEXT,
+          section_id TEXT,
+          section_order INTEGER
+        )
+      ''');
+      log('Tables created successfully');
+    },
+    onUpgrade: (db, oldVersion, newVersion) async {
+      if (oldVersion < 2) {
+        await db.execute('ALTER TABLE categories ADD COLUMN section_id TEXT');
+        await db.execute('ALTER TABLE categories ADD COLUMN section_title TEXT');
+      }
+    },
+  );
+}
 }

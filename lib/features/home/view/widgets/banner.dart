@@ -1,8 +1,7 @@
-import 'dart:developer';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:grabit/features/common/view/cached_viewer.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grabit/features/home/view/widgets/cached_viewer.dart';
 import '../../model/banner_model.dart';
 
 class HeroBanner extends StatefulWidget {
@@ -43,7 +42,6 @@ class _HeroBannerState extends State<HeroBanner> {
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(screenWidth * (8 / 360)),
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: Stack(
@@ -54,7 +52,9 @@ CachedImageViewer(
   width: screenWidth,
   fit: BoxFit.cover,
 ),
-Text(banner.title)
+Align(
+  alignment: Alignment.center,
+  child: Text(banner.title.split('- ').last,style: GoogleFonts.labrada(),))
 
 
 

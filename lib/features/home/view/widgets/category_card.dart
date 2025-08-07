@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grabit/features/common/view/cached_viewer.dart';
+import 'package:grabit/features/home/view/widgets/cached_viewer.dart';
 
 class CategoryCard extends StatelessWidget {
   final String title;

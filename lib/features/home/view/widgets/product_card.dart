@@ -2,8 +2,8 @@
 // lib/features/home/widgets/product_card.dart
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:grabit/features/common/models/product_model.dart';
-import 'package:grabit/features/common/view/cached_viewer.dart';
+import 'package:grabit/features/home/model/product_model.dart';
+import 'package:grabit/features/home/view/widgets/cached_viewer.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;

@@ -1,6 +1,6 @@
 // lib/features/home/widgets/product_list_section.dart
 import 'package:flutter/material.dart';
-import 'package:grabit/features/common/models/product_model.dart';
+import 'package:grabit/features/home/model/product_model.dart';
 import 'product_card.dart';
 
 class ProductListSection extends StatelessWidget {
