@@ -11,10 +11,8 @@ class NetworkInfoImpl implements NetworkInfo {
   Future<bool> get isConnected async {
     final connectivityResult = await Connectivity().checkConnectivity();
 
-    // Not connected to WiFi or mobile
     if (connectivityResult == ConnectivityResult.none) return false;
 
-    // Try to lookup a reliable host to confirm actual internet access
     try {
       final result = await InternetAddress.lookup('google.com');
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;

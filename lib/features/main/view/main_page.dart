@@ -1,4 +1,3 @@
-// views/main_page.dart
 import 'dart:developer';
 
 import 'package:flutter/material.dart';

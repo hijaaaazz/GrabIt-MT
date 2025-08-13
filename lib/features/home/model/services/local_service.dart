@@ -26,7 +26,6 @@ class LocalStorage {
         order: bannerMaps.isNotEmpty ? (bannerMaps.first['section_order'] as int?) ?? 0 : 0,
       );
 
-      // Fetch categories and group by section_id
       final categoryMaps = await db.query('categories', orderBy: 'section_order ASC');
       final categorySections = <String, SectionModel>{};
       for (var map in categoryMaps) {

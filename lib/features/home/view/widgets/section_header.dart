@@ -1,5 +1,3 @@
-
-// lib/features/home/widgets/section_header.dart
 import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {
@@ -37,8 +35,8 @@ class SectionHeader extends StatelessWidget {
               'View all',
               style: TextStyle(
                 fontSize: screenWidth * (12 / 360.0),
-                color: const Color(0xFF92C848),
-                fontWeight: FontWeight.w500,
+                color: const Color.fromARGB(255, 0, 0, 0),
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),

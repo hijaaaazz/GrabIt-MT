@@ -40,7 +40,7 @@ class _ImprovedBottomNavBarState extends State<ImprovedBottomNavBar>
     ));
     _slideAnimation = Tween<double>(
       begin: 0.0,
-      end: -10.0, // Move up by 12 pixels
+      end: -10.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -66,17 +66,16 @@ class _ImprovedBottomNavBarState extends State<ImprovedBottomNavBar>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 70, // Increased height to accommodate upward animation
-      child: Stack(
+      height: 70,
+       child: Stack(
         children: [
-          // Bottom grey background bar (positioned higher to show unselected icons)
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
-              height: 50, // Increased height for unselected icons
-              decoration: const BoxDecoration(
+              height: 50,
+               decoration: const BoxDecoration(
                 color: Color(0xFFDBDBDB),
               ),
             ),
@@ -102,7 +101,6 @@ class _ImprovedBottomNavBarState extends State<ImprovedBottomNavBar>
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Selected item with upward animation
                             if (isSelected)
                               AnimatedBuilder(
                                 animation: _slideAnimation,
@@ -163,7 +161,6 @@ class _ImprovedBottomNavBarState extends State<ImprovedBottomNavBar>
                                   );
                                 },
                               ),
-                            // Unselected items (positioned within grey area)
                             
                               Positioned(
                                 bottom: 8,

@@ -21,7 +21,6 @@ class ProductCardShimmer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image shimmer
             ShimmerBox(
               height: screenHeight * (70 / 786.7),
               borderRadius: BorderRadius.vertical(
